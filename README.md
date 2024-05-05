@@ -30,14 +30,14 @@ Creating an object schema
 (ns app
   (:require smeghead\schema :as z))
 
-(def user-schama (z-object {
-  :username (z-string)
+(def user-schama (z/object {
+  :username (z/string)
 }))
 
 (z/parse user-schama {:username "Ludwig"})
 
 # extract the inferred type
-(z-infer user-schama)
+(z/infer user-schama)
 # { username: string }
 ```
 
@@ -48,24 +48,24 @@ Creating an object schema
   (:require smeghead\schema :as z))
 
 # primitive values
-(z-string)
-(z-number)
-(z-bigint)
-(z-boolean)
-(z-date)
-(z-symbol)
+(z/string)
+(z/number)
+(z/bigint)
+(z/boolean)
+(z/date)
+(z/symbol)
 
 # empty types
-(z-undefined)
-(z-null)
-(z-void) # accepts undefined
+(z/undefined)
+(z/null)
+(z/void) # accepts undefined
 
 # catch-all types
 # allows any value
-(z-any)
-(z-unknown)
+(z/any)
+(z/unknown)
 
 # never type
 # allows no values
-(z-never)
+(z/never)
 ```
