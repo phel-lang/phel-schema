@@ -1,0 +1,33 @@
+(ns smeghead\schema
+  (:use \Smeghead\PhelSchema\ZodError)
+  (:require smeghead\schema\interfaces :refer [SchemaInterface valid message])
+  (:require smeghead\schema\type\number)
+  (:require smeghead\schema\type\string))
+
+(defn string []
+  (string/string))
+
+(defn number []
+  (number/number))
+
+(defn- validate [schema target]
+  (loop [rules (schema :rules)
+         acc []]
+    (if (empty? rules)
+      acc
+      (let [rule (first rules)]
+        (if (valid rule target)
+          (recur (rest rules) acc)
+          (recur (rest rules) (push acc {:message (message rule)})))))))
+
+(defn safe-parse [schema target]
+  (let [issues (validate schema target)]
+    (if (empty? issues)
+      {:success true :data target}
+      {:success false :error (php/:: ZodError (create "Zod Error" (to-php-array issues)))})))
+
+(defn parse [schema target]
+  (let [result (safe-parse schema target)]
+    (if (result :success)
+      (result :data)
+      (throw (result :error)))))

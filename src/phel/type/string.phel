@@ -1,0 +1,11 @@
+(ns smeghead\schema\type\string
+  (:require smeghead\schema\interfaces :refer [schema RuleInterface]))
+
+(defstruct rule-string [key valid message]
+  RuleInterface
+  (valid [this target] ((this :valid) target))
+  (message [this] (this :message)))
+
+(defn string []
+  (schema [(rule-string :required_error (fn [x] (not (empty? x))) "Required")
+           (rule-string :invalid_type_error string? "Invalid type")]))

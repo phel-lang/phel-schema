@@ -1,0 +1,8 @@
+(ns smeghead\schema\interfaces)
+
+(defstruct schema [rules])
+
+(definterface RuleInterface
+  (valid [this target] "validate target.")
+  (message [this] "return error message."))
+
