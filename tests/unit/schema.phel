@@ -1,0 +1,23 @@
+(ns smeghead\tests\unit\schema
+  (:require phel\test :refer [deftest is])
+  (:require smeghead\schema :as z))
+
+(deftest test-string-parse-ok
+  (let [my-schema (z/string)]
+    (is (= "tuna" (z/parse my-schema "tuna")))))
+
+(deftest test-string-parse-ng
+  (let [my-schema (z/string)]
+    (is (thrown? \Exception (z/parse my-schema 12)))))
+
+(deftest test-string-safe-parse-ok
+  (let [my-schema (z/string)
+        result (z/safe-parse my-schema "tuna")]
+    (is (= true (result :success)))
+    (is (= "tuna" (result :data)))))
+
+(deftest test-string-safe-parse-ng
+  (let [my-schema (z/string)
+        result (z/safe-parse my-schema 12)]
+    (is (= false (result :success)))
+    (is (= "Exception" (php/get_class (result :error))))))

@@ -1,0 +1,32 @@
+{
+    "name": "smeghead/phel-schema",
+    "description": "Schema validation library in phel. The library inspired by zod",
+    "type": "library",
+    "keywords": [
+        "phel",
+        "validation",
+        "schema",
+        "zod"
+    ],
+    "require": {
+        "php": ">=8.2",
+        "phel-lang/phel-lang": "^0.13"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Smeghead\\PhelSchema\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "smeghead",
+            "email": "smeghead7@gmail.com"
+        }
+    ],
+    "scripts": {
+        "test": [
+            "vendor/bin/phel test"
+        ]
+    }
+}

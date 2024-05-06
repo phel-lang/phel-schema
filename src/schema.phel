@@ -1,0 +1,19 @@
+(ns smeghead\schema)
+
+(defstruct schema [type message])
+
+(defn string []
+  (schema :string ""))
+
+(defn safe-parse [schema target]
+  (cond
+    (= (schema :type) :string)
+    (if (string? target)
+      {:success true :data target}
+      {:success false :error (php/new \Exception "zod error")})))
+
+(defn parse [schema target]
+  (let [result (safe-parse schema target)]
+    (if (result :success)
+      (result :data)
+      (throw (result :error)))))
