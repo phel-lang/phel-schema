@@ -16,6 +16,5 @@
     (is (= false (result :success)))
     (let [error (result :error)]
       (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
-      )))
       (let [issues (php/-> error (getIssues))]
         (is (= "Too long" (get-in issues [0 :message])))))))
