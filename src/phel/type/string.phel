@@ -1,4 +1,5 @@
 (ns smeghead\schema\type\string
+  (:require phel\str)
   (:require smeghead\schema\interfaces :refer [schema RuleInterface]))
 
 (defstruct rule-string [key valid message]
@@ -9,3 +10,10 @@
 (defn string []
   (schema [(rule-string :required_error (fn [x] (not (empty? x))) "Required")
            (rule-string :invalid_type_error string? "Invalid type")]))
+
+(defn min [s n & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-string :min (fn [x] (< (php/mb_strlen x) n)) "Too long"))))
+

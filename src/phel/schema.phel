@@ -1,8 +1,20 @@
 (ns smeghead\schema
+  (:use \Phel\Lang\Symbol)
   (:use \Smeghead\PhelSchema\ZodError)
-  (:require smeghead\schema\interfaces :refer [SchemaInterface valid message])
+  (:require smeghead\schema\interfaces :refer [valid message])
   (:require smeghead\schema\type\number)
   (:require smeghead\schema\type\string))
+
+#(defmacro- proxy [namespace & xs]
+#  `,@(loop [xs xs
+#            acc []]
+#       (if (empty? xs)
+#         acc
+#         (recur (rest xs) (push acc `(defn ,(php/new Symbol nil (first xs)) [& args]
+#                                       (apply ,(php/new Symbol namespace (first xs)) args)))))))
+#(proxy "smeghead\schema\\type\string" "min")
+
+(defn min [& rest] (apply string/min rest))
 
 (defn string []
   (string/string))
