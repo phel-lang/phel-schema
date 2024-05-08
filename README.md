@@ -22,6 +22,21 @@ Creating a simple string schema
 (z/safe-parse my-schema 12) # => {:success false :error ZodError}
 ```
 
+```clojure
+(ns app
+  (:require smeghead\schema :as z))
+
+# creating a schema for strings
+(def my-schema (as-> (z/string) s
+                     (z/min s 3)
+                     (z/max s 10)
+                     (z/regex s "/^t/")))
+
+# parsing
+(z/parse my-schema "tuna") # => "tuna"
+(z/parse my-schema 12) # => throws ZodError
+
+```
 
 Creating an object schema
 
