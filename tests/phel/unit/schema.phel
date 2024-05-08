@@ -22,8 +22,7 @@
     (is (= false (result :success)))
     (let [error (result :error)]
       (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
-      (let [issues (php/-> error (getIssues))]
-        (is (= "Invalid type" (get-in issues [0 :message])))))))
+      (is (= "Invalid type" (get-in (php/-> error (getIssues)) [0 :message]))))))
 
 (deftest test-number-safe-parse-ok
   (let [my-schema (z/number)
@@ -37,5 +36,4 @@
     (is (= false (result :success)))
     (let [error (result :error)]
       (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
-      (let [issues (php/-> error (getIssues))]
-        (is (= "Invalid type" (get-in issues [0 :message])))))))
+      (is (= "Invalid type" (get-in (php/-> error (getIssues)) [0 :message]))))))

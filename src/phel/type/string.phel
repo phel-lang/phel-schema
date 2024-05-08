@@ -11,9 +11,28 @@
   (schema [(rule-string :required_error (fn [x] (not (empty? x))) "Required")
            (rule-string :invalid_type_error string? "Invalid type")]))
 
+(defn max [s n & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-string :max (fn [x] (<= (php/mb_strlen x) n)) (or message "Too long")))))
+
 (defn min [s n & [{:message message}]]
   (schema
     (push
       (s :rules)
-      (rule-string :min (fn [x] (< (php/mb_strlen x) n)) "Too long"))))
+      (rule-string :min (fn [x] (>= (php/mb_strlen x) n)) (or message "Too short")))))
+
+(defn length [s n & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-string :length (fn [x] (= (php/mb_strlen x) n)) (or message "Wrong length")))))
+
+(defn regex [s regexp & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-string :regex (fn [x] (= (php/preg_match regexp x) 1)) (or message "Not match")))))
+
 

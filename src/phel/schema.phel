@@ -5,16 +5,20 @@
   (:require smeghead\schema\type\number)
   (:require smeghead\schema\type\string))
 
-#(defmacro- proxy [namespace & xs]
-#  `,@(loop [xs xs
-#            acc []]
-#       (if (empty? xs)
-#         acc
-#         (recur (rest xs) (push acc `(defn ,(php/new Symbol nil (first xs)) [& args]
-#                                       (apply ,(php/new Symbol namespace (first xs)) args)))))))
-#(proxy "smeghead\schema\\type\string" "min")
+(defmacro- proxy [namespace & xs]
+  `(do ,@(loop [xs xs
+                acc []]
+     (if (empty? xs)
+       acc
+       (recur (rest xs)
+              (push
+                acc
+                `(defn ,(php/new Symbol nil (first xs)) [& args]
+                   (apply ,(php/new Symbol namespace (first xs)) args))))))))
 
-(defn min [& rest] (apply string/min rest))
+(proxy "smeghead\schema\\type\string" "max" "min" "length" "regex")
+
+#(defn min [& rest] (apply string/min rest))
 
 (defn string []
   (string/string))
