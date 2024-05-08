@@ -34,8 +34,7 @@ Creating a simple string schema
 
 # parsing
 (z/parse my-schema "tuna") # => "tuna"
-(z/parse my-schema 12) # => throws ZodError
-
+(z/parse my-schema "a tuna") # => throws ZodError
 ```
 
 Creating an object schema
