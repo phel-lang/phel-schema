@@ -1,5 +1,4 @@
 (ns smeghead\schema\type\string
-  (:require phel\str)
   (:require smeghead\schema\interfaces :refer [schema RuleInterface]))
 
 (defstruct rule-string [key valid message]

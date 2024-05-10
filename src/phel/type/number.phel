@@ -8,4 +8,10 @@
 
 (defn number []
   (schema [(rule-number :required_error (fn [x] (not (empty? x))) "Required")
-           (rule-number :invalid_type_error number? "Invalid type")]))
+           (rule-number :invalid_type_error (fn [x] (or (number? x) (php/is_numeric x))) "Invalid type")]))
+
+(defn gt [s n & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :gt (fn [x] (> x n)) (or message "Too small")))))

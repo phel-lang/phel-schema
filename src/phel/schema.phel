@@ -19,8 +19,7 @@
 
 (proxy "smeghead\schema\\type\string" [:string :max :min :length :regex])
 
-(defn number []
-  (number/number))
+(proxy "smeghead\schema\\type\\number" [:number :gt])
 
 (defn- validate [schema target]
   (loop [rules (schema :rules)
