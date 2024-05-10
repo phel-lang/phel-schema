@@ -3,16 +3,14 @@
   (:require smeghead\schema :as z))
 
 (deftest test-string-min-ok
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/min s 5))
         result (z/safe-parse my-schema "tunat")]
     (is (= true (result :success)))
     (is (= "tunat" (result :data)))))
 
 (deftest test-string-min-ng
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/min s 5))
         result (z/safe-parse my-schema "tuna")]
     (is (= false (result :success)))
@@ -21,8 +19,7 @@
       (is (= "Too short" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-min-ng-message-customize
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/min s 5 {:message "toooo short"}))
         result (z/safe-parse my-schema "tuna")]
     (is (= false (result :success)))
@@ -31,16 +28,14 @@
       (is (= "toooo short" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-max-ok
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/max s 5))
         result (z/safe-parse my-schema "tunat")]
     (is (= true (result :success)))
     (is (= "tunat" (result :data)))))
 
 (deftest test-string-max-ng
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/max s 5))
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
@@ -49,8 +44,7 @@
       (is (= "Too long" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-max-ng-message-customize
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/max s 5 {:message "toooo long"}))
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
@@ -59,16 +53,14 @@
       (is (= "toooo long" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-length-ok
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/length s 5))
         result (z/safe-parse my-schema "tunat")]
     (is (= true (result :success)))
     (is (= "tunat" (result :data)))))
 
 (deftest test-string-length-ng
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/length s 5))
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
@@ -77,16 +69,14 @@
       (is (= "Wrong length" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-regex-ok
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/regex s "/^tuna/"))
         result (z/safe-parse my-schema "tuna")]
     (is (= true (result :success)))
     (is (= "tuna" (result :data)))))
 
 (deftest test-string-regex-ng
-  (let [my-schema (z/string)
-        my-schema (as-> my-schema s
+  (let [my-schema (as-> (z/string) s
                     (z/regex s "/^tuna/"))
         result (z/safe-parse my-schema "fish")]
     (is (= false (result :success)))
