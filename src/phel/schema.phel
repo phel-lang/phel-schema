@@ -5,23 +5,19 @@
   (:require smeghead\schema\type\number)
   (:require smeghead\schema\type\string))
 
-(defmacro- proxy [namespace & xs]
-  `(do ,@(loop [xs xs
+(defmacro- proxy [namespace symbols]
+  `(do ,@(loop [symbols symbols
                 acc []]
-     (if (empty? xs)
+     (if (empty? symbols)
        acc
-       (recur (rest xs)
+       (recur (rest symbols)
               (push
                 acc
-                `(defn ,(php/new Symbol nil (first xs)) [& args]
-                   (apply ,(php/new Symbol namespace (first xs)) args))))))))
+                (let [s (name (first symbols))]
+                  `(defn ,(php/new Symbol nil s) [& args]
+                     (apply ,(php/new Symbol namespace s) args)))))))))
 
-(proxy "smeghead\schema\\type\string" "max" "min" "length" "regex")
-
-#(defn min [& rest] (apply string/min rest))
-
-(defn string []
-  (string/string))
+(proxy "smeghead\schema\\type\string" [:string :max :min :length :regex])
 
 (defn number []
   (number/number))
