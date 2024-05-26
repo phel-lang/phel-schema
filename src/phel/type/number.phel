@@ -15,3 +15,27 @@
     (push
       (s :rules)
       (rule-number :gt (fn [x] (> x n)) (or message "Too small")))))
+
+(defn gte [s n & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :gte (fn [x] (>= x n)) (or message "Too small")))))
+
+(defn lt [s n & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :lt (fn [x] (< x n)) (or message "Too large")))))
+
+(defn lte [s n & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :lt (fn [x] (<= x n)) (or message "Too large")))))
+
+(defn int [s & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :int (fn [x] (= (php/preg_match "/^[+-]?[0-9]+$/" (php/strval x)) 1)) (or message "Not integer")))))

@@ -1,0 +1,17 @@
+(ns smeghead\tests\unit\number
+  (:require phel\test :refer [deftest is])
+  (:require smeghead\schema :as z))
+
+(deftest test-number-safe-parse-ok
+  (let [my-schema (z/number)
+        result (z/safe-parse my-schema 12)]
+    (is (= true (result :success)))
+    (is (= 12 (result :data)))))
+
+(deftest test-number-safe-parse-ng
+  (let [my-schema (z/number)
+        result (z/safe-parse my-schema "tuna")]
+    (is (= false (result :success)))
+    (let [error (result :error)]
+      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Invalid type" (get-in (php/-> error (getIssues)) [0 :message]))))))
