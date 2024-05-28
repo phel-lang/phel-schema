@@ -39,3 +39,27 @@
     (push
       (s :rules)
       (rule-number :int (fn [x] (= (php/preg_match "/^[+-]?[0-9]+$/" (php/strval x)) 1)) (or message "Not integer")))))
+
+(defn positive [s & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :positive (fn [x] (> x 0)) (or message "Not positive")))))
+
+(defn nonnegative [s & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :nonnegative (fn [x] (>= x 0)) (or message "Not nonnegative")))))
+
+(defn negative [s & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :negative (fn [x] (< x 0)) (or message "Not negative")))))
+
+(defn nonpositive [s & [{:message message}]]
+  (schema
+    (push
+      (s :rules)
+      (rule-number :nonpositive (fn [x] (<= x 0)) (or message "Not nonpositive")))))

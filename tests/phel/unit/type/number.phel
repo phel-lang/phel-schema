@@ -114,3 +114,67 @@
     (let [error (result :error)]
       (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Not integer" (get-in (php/-> error (getissues)) [0 :message]))))))
+
+(deftest test-number-positive-ok
+  (let [my-schema (as-> (z/number) s
+                    (z/positive s))
+        result (z/safe-parse my-schema "5")]
+    (is (= true (result :success)))
+    (is (= "5" (result :data)))))
+
+(deftest test-number-positive-ng
+  (let [my-schema (as-> (z/number) s
+                    (z/positive s))
+        result (z/safe-parse my-schema "0")]
+    (is (= false (result :success)))
+    (let [error (result :error)]
+      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Not positive" (get-in (php/-> error (getissues)) [0 :message]))))))
+
+(deftest test-number-nonnegative-ok
+  (let [my-schema (as-> (z/number) s
+                    (z/nonnegative s))
+        result (z/safe-parse my-schema "0")]
+    (is (= true (result :success)))
+    (is (= "0" (result :data)))))
+
+(deftest test-number-nonnegative-ng
+  (let [my-schema (as-> (z/number) s
+                    (z/nonnegative s))
+        result (z/safe-parse my-schema "-1")]
+    (is (= false (result :success)))
+    (let [error (result :error)]
+      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Not nonnegative" (get-in (php/-> error (getissues)) [0 :message]))))))
+
+(deftest test-number-negative-ok
+  (let [my-schema (as-> (z/number) s
+                    (z/negative s))
+        result (z/safe-parse my-schema "-1")]
+    (is (= true (result :success)))
+    (is (= "-1" (result :data)))))
+
+(deftest test-number-negative-ng
+  (let [my-schema (as-> (z/number) s
+                    (z/negative s))
+        result (z/safe-parse my-schema "0")]
+    (is (= false (result :success)))
+    (let [error (result :error)]
+      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Not negative" (get-in (php/-> error (getissues)) [0 :message]))))))
+
+(deftest test-number-nonpositive-ok
+  (let [my-schema (as-> (z/number) s
+                    (z/nonpositive s))
+        result (z/safe-parse my-schema "0")]
+    (is (= true (result :success)))
+    (is (= "0" (result :data)))))
+
+(deftest test-number-nonpositive-ng
+  (let [my-schema (as-> (z/number) s
+                    (z/nonpositive s))
+        result (z/safe-parse my-schema "1")]
+    (is (= false (result :success)))
+    (let [error (result :error)]
+      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Not nonpositive" (get-in (php/-> error (getissues)) [0 :message]))))))
