@@ -3,7 +3,8 @@
   (:use \Smeghead\PhelSchema\ZodError)
   (:require smeghead\schema\interfaces :refer [valid message])
   (:require smeghead\schema\type\number)
-  (:require smeghead\schema\type\string))
+  (:require smeghead\schema\type\string)
+  (:require smeghead\schema\type\object))
 
 (defmacro- proxy [namespace symbols]
   `(do ,@(loop [symbols symbols
@@ -20,6 +21,8 @@
 (proxy "smeghead\schema\\type\string" [:string :max :min :length :regex])
 
 (proxy "smeghead\schema\\type\\number" [:number :gt :gte :lt :lte :int :positive :nonnegative :negative :nonpositive])
+
+(proxy "smeghead\schema\\type\object" [:object])
 
 (defn- validate [schema target]
   (loop [rules (schema :rules)

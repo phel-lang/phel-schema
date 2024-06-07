@@ -1,0 +1,26 @@
+(ns smeghead\tests\unit\object
+  (:require phel\test :refer [deftest is])
+  (:require smeghead\schema :as z))
+
+(deftest test-object-parse-ok
+  (let [my-schema (z/object)]
+    (is (= {:id 12 :name "dog"} (z/parse my-schema {:id 12 :name "dog"})))))
+
+(deftest test-object-parse-ng
+  (let [my-schema (z/object)]
+    (is (thrown? \Exception (z/parse my-schema 12)))))
+
+(deftest test-object-safe-parse-ok
+  (let [my-schema (z/object)
+        result (z/safe-parse my-schema {:id 12 :name "dog"})]
+    (is (= true (result :success)))
+    (is (= {:id 12 :name "dog"} (result :data)))))
+
+(deftest test-object-safe-parse-ng
+  (let [my-schema (z/object)
+        result (z/safe-parse my-schema "string")]
+    (is (= false (result :success)))
+    (let [error (result :error)]
+      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Invalid type" (get-in (php/-> error (getIssues)) [0 :message]))))))
+
