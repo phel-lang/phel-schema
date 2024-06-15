@@ -1,65 +1,68 @@
 (ns smeghead\schema\type\number
   (:require smeghead\schema\interfaces :refer [schema RuleInterface]))
 
-(defstruct rule-number [key valid message]
+(defstruct rule-number [key test message]
   RuleInterface
-  (valid [this target] ((this :valid) target))
+  (validate [this paths target] (if ((this :test) target)
+                         []
+                         [{:message (this :message) :paths paths}]))
   (message [this] (this :message)))
 
 (defn number []
   (schema [(rule-number :required_error (fn [x] (not (empty? x))) "Required")
-           (rule-number :invalid_type_error (fn [x] (or (number? x) (php/is_numeric x))) "Invalid type")]))
+           (rule-number :invalid_type_error (fn [x] (or (number? x) (php/is_numeric x))) "Invalid type")]
+          {}))
 
 (defn gt [s n & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :gt (fn [x] (> x n)) (or message "Too small")))))
 
 (defn gte [s n & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :gte (fn [x] (>= x n)) (or message "Too small")))))
 
 (defn lt [s n & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :lt (fn [x] (< x n)) (or message "Too large")))))
 
 (defn lte [s n & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :lt (fn [x] (<= x n)) (or message "Too large")))))
 
 (defn int [s & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :int (fn [x] (= (php/preg_match "/^[+-]?[0-9]+$/" (php/strval x)) 1)) (or message "Not integer")))))
 
 (defn positive [s & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :positive (fn [x] (> x 0)) (or message "Not positive")))))
 
 (defn nonnegative [s & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :nonnegative (fn [x] (>= x 0)) (or message "Not nonnegative")))))
 
 (defn negative [s & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :negative (fn [x] (< x 0)) (or message "Not negative")))))
 
 (defn nonpositive [s & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-number :nonpositive (fn [x] (<= x 0)) (or message "Not nonpositive")))))

@@ -1,35 +1,38 @@
 (ns smeghead\schema\type\string
   (:require smeghead\schema\interfaces :refer [schema RuleInterface]))
 
-(defstruct rule-string [key valid message]
+(defstruct rule-string [key test message]
   RuleInterface
-  (valid [this target] ((this :valid) target))
+  (validate [this paths target] (if ((this :test) target)
+                         []
+                         [{:message (this :message) :paths paths}]))
   (message [this] (this :message)))
 
 (defn string []
   (schema [(rule-string :required_error (fn [x] (not (empty? x))) "Required")
-           (rule-string :invalid_type_error string? "Invalid type")]))
+           (rule-string :invalid_type_error string? "Invalid type")]
+          {}))
 
 (defn max [s n & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-string :max (fn [x] (<= (php/mb_strlen x) n)) (or message "Too long")))))
 
 (defn min [s n & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-string :min (fn [x] (>= (php/mb_strlen x) n)) (or message "Too short")))))
 
 (defn length [s n & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-string :length (fn [x] (= (php/mb_strlen x) n)) (or message "Wrong length")))))
 
 (defn regex [s regexp & [{:message message}]]
-  (schema
+  (put s :rules
     (push
       (s :rules)
       (rule-string :regex (fn [x] (= (php/preg_match regexp x) 1)) (or message "Not match")))))
