@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Smeghead\PhelSchema;
+namespace Phel\PhelSchema;
 
 final class ZodError extends \RuntimeException {
-  public array $issues = [];
+  private array $issues = [];
 
   public static function create(string $message, array $issues): self
   {

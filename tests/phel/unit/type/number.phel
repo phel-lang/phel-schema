@@ -1,6 +1,6 @@
-(ns smeghead\tests\unit\schema\type\number
+(ns phel\tests\unit\schema\type\number
   (:require phel\test :refer [deftest is])
-  (:require smeghead\schema :as z))
+  (:require phel\schema :as z))
 
 (deftest test-number-gt-ok
   (let [my-schema (as-> (z/number) s
@@ -22,7 +22,7 @@
         result (z/safe-parse my-schema 5)]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Too small" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-gt-ng-message-customize
@@ -31,7 +31,7 @@
         result (z/safe-parse my-schema 5)]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "toooo small" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-gte-ok
@@ -47,7 +47,7 @@
         result (z/safe-parse my-schema 4)]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Too small" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-lt-ok
@@ -63,7 +63,7 @@
         result (z/safe-parse my-schema 5)]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Too large" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-lte-ok
@@ -79,7 +79,7 @@
         result (z/safe-parse my-schema 6)]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Too large" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-int-ok
@@ -102,7 +102,7 @@
         result (z/safe-parse my-schema "a")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Invalid type" (get-in (php/-> error (getissues)) [0 :message])))
       (is (= "Not integer" (get-in (php/-> error (getissues)) [1 :message]))))))
 
@@ -112,7 +112,7 @@
         result (z/safe-parse my-schema "100.3")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Not integer" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-positive-ok
@@ -128,7 +128,7 @@
         result (z/safe-parse my-schema "0")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Not positive" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-nonnegative-ok
@@ -144,7 +144,7 @@
         result (z/safe-parse my-schema "-1")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Not nonnegative" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-negative-ok
@@ -160,7 +160,7 @@
         result (z/safe-parse my-schema "0")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Not negative" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-number-nonpositive-ok
@@ -176,5 +176,5 @@
         result (z/safe-parse my-schema "1")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Not nonpositive" (get-in (php/-> error (getissues)) [0 :message]))))))

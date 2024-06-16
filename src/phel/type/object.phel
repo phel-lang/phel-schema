@@ -1,5 +1,5 @@
-(ns smeghead\schema\type\object
-  (:require smeghead\schema\interfaces :refer [schema RuleInterface validate]))
+(ns phel\schema\type\object
+  (:require phel\schema\interfaces :refer [schema RuleInterface validate]))
 
 (defstruct rule-object [key test message]
   RuleInterface

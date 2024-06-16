@@ -1,10 +1,10 @@
-(ns smeghead\schema
+(ns phel\schema
   (:use \Phel\Lang\Symbol)
-  (:use \Smeghead\PhelSchema\ZodError)
-  (:require smeghead\schema\interfaces :refer [schema schema? validate message])
-  (:require smeghead\schema\type\number)
-  (:require smeghead\schema\type\string)
-  (:require smeghead\schema\type\object))
+  (:use \Phel\PhelSchema\ZodError)
+  (:require phel\schema\interfaces :refer [schema schema? validate message])
+  (:require phel\schema\type\number)
+  (:require phel\schema\type\string)
+  (:require phel\schema\type\object))
 
 (defmacro- proxy [namespace symbols]
   `(do ,@(loop [symbols symbols
@@ -18,11 +18,11 @@
                   `(defn ,(php/new Symbol nil s) [& args]
                      (apply ,(php/new Symbol namespace s) args)))))))))
 
-(proxy "smeghead\schema\\type\string" [:string :max :min :length :regex])
+(proxy "phel\schema\\type\string" [:string :max :min :length :regex])
 
-(proxy "smeghead\schema\\type\\number" [:number :gt :gte :lt :lte :int :positive :nonnegative :negative :nonpositive])
+(proxy "phel\schema\\type\\number" [:number :gt :gte :lt :lte :int :positive :nonnegative :negative :nonpositive])
 
-(proxy "smeghead\schema\\type\object" [:object])
+(proxy "phel\schema\\type\object" [:object])
 
 (declare get-issues)
 

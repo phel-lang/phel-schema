@@ -1,4 +1,4 @@
-(ns smeghead\schema\interfaces)
+(ns phel\schema\interfaces)
 
 (defstruct schema [rules children])
 

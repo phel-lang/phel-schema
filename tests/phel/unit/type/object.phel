@@ -1,7 +1,6 @@
-(ns smeghead\tests\unit\schema\type\object
+(ns phel\tests\unit\schema\type\object
   (:require phel\test :refer [deftest is])
-  (:require smeghead\schema :as z)
-  (:require smeghead\schema\type\object :as o))
+  (:require phel\schema :as z))
 
 (deftest test-object-have-string-ok
   (let [my-schema (z/object {:username (z/string)})
@@ -14,7 +13,7 @@
         result (z/safe-parse my-schema {:username 123})]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Invalid type" (get-in (php/-> error (getissues)) [0 :message])))
       (is (= [:username] (get-in (php/-> error (getissues)) [0 :paths]))))))
 
@@ -25,6 +24,6 @@
         result (z/safe-parse my-schema {:user {:username 123}})]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Invalid type" (get-in (php/-> error (getissues)) [0 :message])))
       (is (= [:user :username] (get-in (php/-> error (getissues)) [0 :paths]))))))

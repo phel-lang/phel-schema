@@ -1,6 +1,6 @@
-(ns smeghead\tests\unit\schema\type\string
+(ns phel\tests\unit\schema\type\string
   (:require phel\test :refer [deftest is])
-  (:require smeghead\schema :as z))
+  (:require phel\schema :as z))
 
 (deftest test-string-min-ok
   (let [my-schema (as-> (z/string) s
@@ -15,7 +15,7 @@
         result (z/safe-parse my-schema "tuna")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Too short" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-min-ng-message-customize
@@ -24,7 +24,7 @@
         result (z/safe-parse my-schema "tuna")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "toooo short" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-max-ok
@@ -40,7 +40,7 @@
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Too long" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-max-ng-message-customize
@@ -49,7 +49,7 @@
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "toooo long" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-length-ok
@@ -65,7 +65,7 @@
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Wrong length" (get-in (php/-> error (getissues)) [0 :message]))))))
 
 (deftest test-string-regex-ok
@@ -81,5 +81,5 @@
         result (z/safe-parse my-schema "fish")]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Not match" (get-in (php/-> error (getissues)) [0 :message]))))))

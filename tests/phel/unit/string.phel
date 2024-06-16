@@ -1,6 +1,6 @@
-(ns smeghead\tests\unit\string
+(ns phel\tests\unit\string
   (:require phel\test :refer [deftest is])
-  (:require smeghead\schema :as z))
+  (:require phel\schema :as z))
 
 (deftest test-string-parse-ok
   (let [my-schema (z/string)]
@@ -21,6 +21,6 @@
         result (z/safe-parse my-schema 12)]
     (is (= false (result :success)))
     (let [error (result :error)]
-      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
       (is (= "Invalid type" (get-in (php/-> error (getIssues)) [0 :message]))))))
 

@@ -1,5 +1,5 @@
-(ns smeghead\schema\type\number
-  (:require smeghead\schema\interfaces :refer [schema RuleInterface]))
+(ns phel\schema\type\number
+  (:require phel\schema\interfaces :refer [schema RuleInterface]))
 
 (defstruct rule-number [key test message]
   RuleInterface
