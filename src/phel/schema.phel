@@ -1,7 +1,7 @@
 (ns smeghead\schema
   (:use \Phel\Lang\Symbol)
   (:use \Smeghead\PhelSchema\ZodError)
-  (:require smeghead\schema\interfaces :refer [validate message])
+  (:require smeghead\schema\interfaces :refer [schema schema? validate message])
   (:require smeghead\schema\type\number)
   (:require smeghead\schema\type\string)
   (:require smeghead\schema\type\object))
@@ -24,17 +24,25 @@
 
 (proxy "smeghead\schema\\type\object" [:object])
 
-(defn- get-issues [schema target]
+(defn- get-issues [schema paths target]
   (loop [rules (schema :rules)
-         paths []
+         paths paths
          acc []]
     (if (empty? rules)
       acc
       (let [rule (first rules)]
         (recur (rest rules) paths (concat acc (validate rule paths target)))))))
 
+(defn- get-children-issues [schema paths target]
+  (reduce concat [] (for [[k v] :pairs (schema :children)]
+                      (if (schema? v)
+                        (get-issues v (push paths k) (target k))
+                        []))))
+
 (defn safe-parse [schema target]
-  (let [issues (get-issues schema target)]
+  (let [issues (concat
+                 (get-issues schema [] target)
+                 (get-children-issues schema [] target))]
     (if (empty? issues)
       {:success true :data target}
       {:success false :error (php/:: ZodError (create "Zod Error" (to-php-array issues)))})))
