@@ -24,7 +24,9 @@
 
 (proxy "smeghead\schema\\type\object" [:object])
 
-(defn- get-issues [schema paths target]
+(declare get-issues)
+
+(defn- get-parent-issues [schema paths target]
   (loop [rules (schema :rules)
          paths paths
          acc []]
@@ -39,10 +41,13 @@
                         (get-issues v (push paths k) (target k))
                         []))))
 
+(defn- get-issues [schema paths target]
+  (concat
+    (get-parent-issues schema paths target)
+    (get-children-issues schema paths target)))
+
 (defn safe-parse [schema target]
-  (let [issues (concat
-                 (get-issues schema [] target)
-                 (get-children-issues schema [] target))]
+  (let [issues (get-issues schema [] target)]
     (if (empty? issues)
       {:success true :data target}
       {:success false :error (php/:: ZodError (create "Zod Error" (to-php-array issues)))})))
