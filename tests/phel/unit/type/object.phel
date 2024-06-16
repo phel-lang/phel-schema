@@ -9,17 +9,11 @@
     (is (= true (result :success)))
     (is (= {:username "Jeff Beck"} (result :data)))))
 
-#(deftest test-walk-hash-map-ng
-#  (let [my-schema (z/object {:username (z/string)})
-#        result (o/walk-hash-map (get-in my-schema [:rule 0]) {:username 123} [] [])]
-#    (is (= 1 (count result)))
-#    (is (= "Invalid type" (get-in result [0 :message])))))
-
-#(deftest test-object-have-string-ng
-#  (let [my-schema (z/object {:username (z/string)})
-#        result (z/safe-parse my-schema {:username 123})]
-#    (is (= false (result :success)))
-#    (let [error (result :error)]
-#      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
-#      (is (= "Too short" (get-in (php/-> error (getissues)) [0 :message])))
-#      (is (= [:username] (get-in (php/-> error (getissues)) [0 :path]))))))
+(deftest test-object-have-string-ng
+  (let [my-schema (z/object {:username (z/string)})
+        result (z/safe-parse my-schema {:username 123})]
+    (is (= false (result :success)))
+    (let [error (result :error)]
+      (is (= "Smeghead\PhelSchema\ZodError" (php/get_class error)))
+      (is (= "Invalid type" (get-in (php/-> error (getissues)) [0 :message])))
+      (is (= [:username] (get-in (php/-> error (getissues)) [0 :paths]))))))

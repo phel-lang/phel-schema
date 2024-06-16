@@ -1,11 +1,6 @@
 (ns smeghead\schema\type\object
   (:require smeghead\schema\interfaces :refer [schema RuleInterface validate]))
 
-(defn walk-hash-map [rule target paths children]
-  (for [[k v] :pairs children]
-    (cond
-      (php/instanceof v RuleInterface) (validate rule (push paths k) v))))
-
 (defstruct rule-object [key test message]
   RuleInterface
   (validate [this paths target] (if ((this :test) target)
@@ -13,7 +8,7 @@
                          [{:message (this :message) :paths paths}]))
   (message [this] (this :message)))
 
-(defn object [& children]
+(defn object [& [children]]
   (schema [(rule-object :required_error (fn [x] (not (empty? x))) "Required")
            (rule-object :invalid_type_error hash-map? "Invalid type")]
           children))
