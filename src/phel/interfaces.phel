@@ -3,6 +3,5 @@
 (defstruct schema [rules children])
 
 (definterface RuleInterface
-  (validate [this paths target] "validate target.")
-  (message [this] "return error message."))
+  (validate [this paths target] "validate target."))
 

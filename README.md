@@ -19,7 +19,7 @@ Creating a simple string schema
 
 # "safe" parsing (doesn't throw error if validation fails)
 (z/safe-parse my-schema "tuna") # => {:success true :data "tuna"}
-(z/safe-parse my-schema 12) # => {:success false :error ZodError}
+(z/safe-parse my-schema 12) # => {:success false :error ZodError :issues [...]}
 ```
 
 ```clojure

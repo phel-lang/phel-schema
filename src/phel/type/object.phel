@@ -5,8 +5,7 @@
   RuleInterface
   (validate [this paths target] (if ((this :test) target)
                          []
-                         [{:message (this :message) :paths paths}]))
-  (message [this] (this :message)))
+                         [{:message (this :message) :paths paths}])))
 
 (defn object [& [children]]
   (schema [(rule-object :required_error (fn [x] (not (empty? x))) "Required")
