@@ -12,10 +12,9 @@
   (let [my-schema (z/object {:username (z/string)})
         result (z/safe-parse my-schema {:username 123})]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "Invalid type" (get-in (php/-> error (getissues)) [0 :message])))
-      (is (= [:username] (get-in (php/-> error (getissues)) [0 :paths]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "Invalid type" (get-in (result :issues) [0 :message])))
+    (is (= [:username] (get-in (result :issues) [0 :paths])))))
 
 (deftest test-nested-object-have-string-ng
   (let [my-schema (z/object {
@@ -23,7 +22,6 @@
                             :username (z/string)})})
         result (z/safe-parse my-schema {:user {:username 123}})]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "Invalid type" (get-in (php/-> error (getissues)) [0 :message])))
-      (is (= [:user :username] (get-in (php/-> error (getissues)) [0 :paths]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "Invalid type" (get-in (result :issues) [0 :message])))
+    (is (= [:user :username] (get-in (result :issues) [0 :paths])))))

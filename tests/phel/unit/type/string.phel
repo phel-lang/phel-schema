@@ -14,18 +14,16 @@
                     (z/min s 5))
         result (z/safe-parse my-schema "tuna")]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "Too short" (get-in (php/-> error (getissues)) [0 :message]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "Too short" (get-in (result :issues) [0 :message])))))
 
 (deftest test-string-min-ng-message-customize
   (let [my-schema (as-> (z/string) s
                     (z/min s 5 {:message "toooo short"}))
         result (z/safe-parse my-schema "tuna")]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "toooo short" (get-in (php/-> error (getissues)) [0 :message]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "toooo short" (get-in (result :issues) [0 :message])))))
 
 (deftest test-string-max-ok
   (let [my-schema (as-> (z/string) s
@@ -39,18 +37,16 @@
                     (z/max s 5))
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "Too long" (get-in (php/-> error (getissues)) [0 :message]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "Too long" (get-in (result :issues) [0 :message])))))
 
 (deftest test-string-max-ng-message-customize
   (let [my-schema (as-> (z/string) s
                     (z/max s 5 {:message "toooo long"}))
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "toooo long" (get-in (php/-> error (getissues)) [0 :message]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "toooo long" (get-in (result :issues) [0 :message])))))
 
 (deftest test-string-length-ok
   (let [my-schema (as-> (z/string) s
@@ -64,9 +60,8 @@
                     (z/length s 5))
         result (z/safe-parse my-schema "tunatuna")]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "Wrong length" (get-in (php/-> error (getissues)) [0 :message]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "Wrong length" (get-in (result :issues) [0 :message])))))
 
 (deftest test-string-regex-ok
   (let [my-schema (as-> (z/string) s
@@ -80,6 +75,5 @@
                     (z/regex s "/^tuna/"))
         result (z/safe-parse my-schema "fish")]
     (is (= false (result :success)))
-    (let [error (result :error)]
-      (is (= "Phel\PhelSchema\ZodError" (php/get_class error)))
-      (is (= "Not match" (get-in (php/-> error (getissues)) [0 :message]))))))
+    (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
+    (is (= "Not match" (get-in (result :issues) [0 :message])))))

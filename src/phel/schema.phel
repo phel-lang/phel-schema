@@ -49,8 +49,12 @@
 (defn safe-parse [schema target]
   (let [issues (get-issues schema [] target)]
     (if (empty? issues)
-      {:success true :data target}
-      {:success false :error (php/:: ZodError (create "Zod Error" (to-php-array issues)))})))
+      {:success true
+       :data target
+       :issues []}
+      {:success false
+       :error (php/:: ZodError (create "Zod Error" (to-php-array issues)))
+       :issues issues})))
 
 (defn parse [schema target]
   (let [result (safe-parse schema target)]
