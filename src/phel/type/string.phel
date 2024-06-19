@@ -4,8 +4,8 @@
 (defstruct rule-string [key test message]
   RuleInterface
   (validate [this paths target] (if ((this :test) target)
-                         []
-                         [{:message (this :message) :paths paths}])))
+                                  []
+                                  [{:message (this :message) :paths paths}])))
 
 (defn string []
   (schema [(rule-string :required_error (fn [x] (not (empty? x))) "Required")

@@ -1,7 +1,7 @@
 (ns phel\schema
   (:use \Phel\Lang\Symbol)
   (:use \Phel\PhelSchema\ZodError)
-  (:require phel\schema\interfaces :refer [schema schema? validate message])
+  (:require phel\schema\interfaces :refer [schema schema? validate message RuleInterface])
   (:require phel\schema\type\number)
   (:require phel\schema\type\string)
   (:require phel\schema\type\object))
@@ -61,3 +61,16 @@
     (if (result :success)
       (result :data)
       (throw (result :error)))))
+
+(defstruct rule-custom [key test message]
+  RuleInterface
+  (validate [this paths target] (if ((this :test) target)
+                                  []
+                                  [{:message (this :message) :paths paths}])))
+
+(defn custom [s test message]
+  (put s :rules
+    (push
+      (s :rules)
+      (rule-custom :custom test message))))
+
