@@ -49,10 +49,6 @@ Creating an object schema
 }))
 
 (z/parse user-schama {:username "Ludwig"})
-
-# extract the inferred type
-(z/infer user-schama)
-# { username: string }
 ```
 
 ### Primitives
@@ -64,24 +60,25 @@ Creating an object schema
 # primitive values
 (z/string)
 (z/number)
-(z/bigint)
-(z/boolean)
-(z/date)
-(z/symbol)
+(z/bigint) # z/bigint is not yet implemented.
+(z/infer user-schama) # z/infer is not yet implemented.
+(z/boolean) # z/boolean is not yet implemented.
+(z/date) # z/date is not yet implemented.
+(z/symbol) # z/symbol is not yet implemented.
 
 # empty types
-(z/undefined)
-(z/null)
-(z/void) # accepts undefined
+(z/undefined) # z/undefined is not yet implemented.
+(z/null) # z/null is not yet implemented.
+(z/void) # accepts undefined # z/void is not yet implemented.
 
 # catch-all types
 # allows any value
-(z/any)
-(z/unknown)
+(z/any) # z/any is not yet implemented.
+(z/unknown) # z/unknown is not yet implemented.
 
 # never type
 # allows no values
-(z/never)
+(z/never) # z/never is not yet implemented.
 ```
 
 
