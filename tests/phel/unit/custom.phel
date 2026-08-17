@@ -4,24 +4,24 @@
 
 (deftest test-string-parse-ok
   (let [my-schema (z/string)
-        my-schema (z/custom my-schema |(= (php/mb_strlen $) 4) "length must be 4")]
+        my-schema (z/custom my-schema #(= (php/mb_strlen %) 4) "length must be 4")]
     (is (= "tuna" (z/parse my-schema "tuna")))))
 
 (deftest test-string-parse-ng
   (let [my-schema (z/string)
-        my-schema (z/custom my-schema |(= (php/mb_strlen $) 4) "length must be 4")]
+        my-schema (z/custom my-schema #(= (php/mb_strlen %) 4) "length must be 4")]
     (is (thrown? \Exception (z/parse my-schema 12)))))
 
 (deftest test-string-safe-parse-ok
   (let [my-schema (z/string)
-        my-schema (z/custom my-schema |(= (php/mb_strlen $) 4) "length must be 4")
+        my-schema (z/custom my-schema #(= (php/mb_strlen %) 4) "length must be 4")
         result (z/safe-parse my-schema "tuna")]
     (is (= true (result :success)))
     (is (= "tuna" (result :data)))))
 
 (deftest test-string-safe-parse-ng
   (let [my-schema (z/string)
-        my-schema (z/custom my-schema |(= (php/mb_strlen $) 4) "length must be 4")
+        my-schema (z/custom my-schema #(= (php/mb_strlen %) 4) "length must be 4")
         result (z/safe-parse my-schema "12345")]
     (is (= false (result :success)))
     (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))

@@ -7,16 +7,16 @@
   (:require phel\schema\type\object))
 
 (defmacro- proxy [namespace symbols]
-  `(do ,@(loop [symbols symbols
+  `(do ~@(loop [symbols symbols
                 acc []]
      (if (empty? symbols)
        acc
        (recur (rest symbols)
-              (push
+              (conj
                 acc
                 (let [s (name (first symbols))]
-                  `(defn ,(php/new Symbol nil s) [& args]
-                     (apply ,(php/new Symbol namespace s) args)))))))))
+                  `(defn ~(php/new Symbol nil s) [& args]
+                     (apply ~(php/new Symbol namespace s) args)))))))))
 
 (proxy "phel\schema\\type\string" [:string :max :min :length :regex])
 
@@ -38,7 +38,7 @@
 (defn- get-children-issues [schema paths target]
   (reduce concat [] (for [[k v] :pairs (schema :children)]
                       (if (schema? v)
-                        (get-issues v (push paths k) (target k))
+                        (get-issues v (conj paths k) (target k))
                         []))))
 
 (defn- get-issues [schema paths target]
@@ -69,8 +69,8 @@
                                   [{:message (this :message) :paths paths}])))
 
 (defn custom [s test message]
-  (put s :rules
-    (push
+  (assoc s :rules
+    (conj
       (s :rules)
       (rule-custom :custom test message))))
 

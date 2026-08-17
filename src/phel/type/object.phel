@@ -9,6 +9,6 @@
 
 (defn object [& [children]]
   (schema [(rule-object :required_error (fn [x] (not (empty? x))) "Required")
-           (rule-object :invalid_type_error hash-map? "Invalid type")]
+           (rule-object :invalid_type_error map? "Invalid type")]
           children))
 
