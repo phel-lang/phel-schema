@@ -1,6 +1,6 @@
-(ns phel\tests\unit\object
-  (:require phel\test :refer [deftest is])
-  (:require phel\schema :as z))
+(ns phel.tests.unit.object
+  (:require phel.test :refer [deftest is])
+  (:require phel.schema :as z))
 
 (deftest test-object-parse-ok
   (let [my-schema (z/object)]
