@@ -8,7 +8,7 @@ Creating a simple string schema
 
 ```clojure
 (ns app
-  (:require phel\schema :as z))
+  (:require phel.schema :as z))
 
 # creating a schema for strings
 (def my-schema (z/string))
@@ -24,7 +24,7 @@ Creating a simple string schema
 
 ```clojure
 (ns app
-  (:require phel\schema :as z))
+  (:require phel.schema :as z))
 
 # creating a schema for strings
 (def my-schema (as-> (z/string) s
@@ -42,7 +42,7 @@ Creating an object schema
 
 ```clojure
 (ns app
-  (:require phel\schema :as z))
+  (:require phel.schema :as z))
 
 (def user-schama (z/object {
   :username (z/string)
@@ -55,7 +55,7 @@ Creating an object schema
 
 ```clojure
 (ns app
-  (:require phel\schema :as z))
+  (:require phel.schema :as z))
 
 # primitive values
 (z/string)

@@ -1,28 +1,28 @@
-(ns phel\schema
-  (:use \Phel\Lang\Symbol)
-  (:use \Phel\PhelSchema\ZodError)
-  (:require phel\schema\interfaces :refer [schema schema? validate message RuleInterface])
-  (:require phel\schema\type\number)
-  (:require phel\schema\type\string)
-  (:require phel\schema\type\object))
+(ns phel.schema
+  (:use Phel.PhelSchema.ZodError)
+  (:require phel.schema.interfaces :refer [schema schema? validate])
+  (:require phel.schema.type.number :as n)
+  (:require phel.schema.type.string :as s)
+  (:require phel.schema.type.object :as o))
 
-(defmacro- proxy [namespace symbols]
-  `(do ,@(loop [symbols symbols
-                acc []]
-     (if (empty? symbols)
-       acc
-       (recur (rest symbols)
-              (push
-                acc
-                (let [s (name (first symbols))]
-                  `(defn ,(php/new Symbol nil s) [& args]
-                     (apply ,(php/new Symbol namespace s) args)))))))))
+(defn string [& args] (apply s/string args))
+(defn max [& args] (apply s/max args))
+(defn min [& args] (apply s/min args))
+(defn length [& args] (apply s/length args))
+(defn regex [& args] (apply s/regex args))
 
-(proxy "phel\schema\\type\string" [:string :max :min :length :regex])
+(defn number [& args] (apply n/number args))
+(defn gt [& args] (apply n/gt args))
+(defn gte [& args] (apply n/gte args))
+(defn lt [& args] (apply n/lt args))
+(defn lte [& args] (apply n/lte args))
+(defn int [& args] (apply n/int args))
+(defn positive [& args] (apply n/positive args))
+(defn nonnegative [& args] (apply n/nonnegative args))
+(defn negative [& args] (apply n/negative args))
+(defn nonpositive [& args] (apply n/nonpositive args))
 
-(proxy "phel\schema\\type\\number" [:number :gt :gte :lt :lte :int :positive :nonnegative :negative :nonpositive])
-
-(proxy "phel\schema\\type\object" [:object])
+(defn object [& args] (apply o/object args))
 
 (declare get-issues)
 
@@ -38,7 +38,7 @@
 (defn- get-children-issues [schema paths target]
   (reduce concat [] (for [[k v] :pairs (schema :children)]
                       (if (schema? v)
-                        (get-issues v (push paths k) (target k))
+                        (get-issues v (conj paths k) (target k))
                         []))))
 
 (defn- get-issues [schema paths target]
@@ -53,7 +53,7 @@
        :data target
        :issues []}
       {:success false
-       :error (php/:: ZodError (create "Zod Error" (to-php-array issues)))
+       :error (ZodError/create "Zod Error" (to-array issues))
        :issues issues})))
 
 (defn parse [schema target]
@@ -62,15 +62,11 @@
       (result :data)
       (throw (result :error)))))
 
-(defstruct rule-custom [key test message]
-  RuleInterface
-  (validate [this paths target] (if ((this :test) target)
-                                  []
-                                  [{:message (this :message) :paths paths}])))
+(defstruct rule-custom [key test message])
 
 (defn custom [s test message]
-  (put s :rules
-    (push
+  (assoc s :rules
+    (conj
       (s :rules)
       (rule-custom :custom test message))))
 

@@ -1,14 +1,10 @@
-(ns phel\schema\type\object
-  (:require phel\schema\interfaces :refer [schema RuleInterface validate]))
+(ns phel.schema.type.object
+  (:require phel.schema.interfaces :refer [schema]))
 
-(defstruct rule-object [key test message]
-  RuleInterface
-  (validate [this paths target] (if ((this :test) target)
-                                  []
-                                  [{:message (this :message) :paths paths}])))
+(defstruct rule-object [key test message])
 
 (defn object [& [children]]
   (schema [(rule-object :required_error (fn [x] (not (empty? x))) "Required")
-           (rule-object :invalid_type_error hash-map? "Invalid type")]
+           (rule-object :invalid_type_error map? "Invalid type")]
           children))
 

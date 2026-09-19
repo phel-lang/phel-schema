@@ -1,7 +1,10 @@
-(ns phel\schema\interfaces)
+(ns phel.schema.interfaces)
 
 (defstruct schema [rules children])
 
-(definterface RuleInterface
-  (validate [this paths target] "validate target."))
-
+(defn validate
+  "Validates `target` against `rule`, returning a vector of issues."
+  [rule paths target]
+  (if ((rule :test) target)
+    []
+    [{:message (rule :message) :paths paths}]))

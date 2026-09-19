@@ -1,11 +1,7 @@
-(ns phel\schema\type\string
-  (:require phel\schema\interfaces :refer [schema RuleInterface]))
+(ns phel.schema.type.string
+  (:require phel.schema.interfaces :refer [schema]))
 
-(defstruct rule-string [key test message]
-  RuleInterface
-  (validate [this paths target] (if ((this :test) target)
-                                  []
-                                  [{:message (this :message) :paths paths}])))
+(defstruct rule-string [key test message])
 
 (defn string []
   (schema [(rule-string :required_error (fn [x] (not (empty? x))) "Required")
@@ -13,26 +9,26 @@
           {}))
 
 (defn max [s n & [{:message message}]]
-  (put s :rules
-    (push
+  (assoc s :rules
+    (conj
       (s :rules)
       (rule-string :max (fn [x] (<= (php/mb_strlen x) n)) (or message "Too long")))))
 
 (defn min [s n & [{:message message}]]
-  (put s :rules
-    (push
+  (assoc s :rules
+    (conj
       (s :rules)
       (rule-string :min (fn [x] (>= (php/mb_strlen x) n)) (or message "Too short")))))
 
 (defn length [s n & [{:message message}]]
-  (put s :rules
-    (push
+  (assoc s :rules
+    (conj
       (s :rules)
       (rule-string :length (fn [x] (= (php/mb_strlen x) n)) (or message "Wrong length")))))
 
 (defn regex [s regexp & [{:message message}]]
-  (put s :rules
-    (push
+  (assoc s :rules
+    (conj
       (s :rules)
       (rule-string :regex (fn [x] (= (php/preg_match regexp x) 1)) (or message "Not match")))))
 
