@@ -9,8 +9,8 @@
         "zod"
     ],
     "require": {
-        "php": ">=8.2",
-        "phel-lang/phel-lang": ">=0.52 <1.0"
+        "php": ">=8.5",
+        "phel-lang/phel-lang": ">=0.53 <1.0"
     },
     "license": "MIT",
     "autoload": {
