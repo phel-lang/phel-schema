@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=8.5",
-        "phel-lang/phel-lang": ">=0.53 <1.0"
+        "phel-lang/phel-lang": "^0.54"
     },
     "license": "MIT",
     "autoload": {
