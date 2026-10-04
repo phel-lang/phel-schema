@@ -28,12 +28,11 @@
 
 (defn- get-parent-issues [schema paths target]
   (loop [rules (schema :rules)
-         paths paths
          acc []]
     (if (empty? rules)
       acc
       (let [rule (first rules)]
-        (recur (rest rules) paths (concat acc (validate rule paths target)))))))
+        (recur (rest rules) (concat acc (validate rule paths target)))))))
 
 (defn- get-children-issues [schema paths target]
   (reduce concat [] (for [[k v] :pairs (schema :children)]
