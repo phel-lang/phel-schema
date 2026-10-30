@@ -27,3 +27,8 @@
     (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
     (is (= "length must be 4" (get-in (result :issues) [0 :message])))))
 
+
+(deftest test-safe-parse-non-schema-throws
+  (is (thrown? \InvalidArgumentException (z/safe-parse nil 1)))
+  (is (thrown? \InvalidArgumentException (z/safe-parse {:rules [] :children {}} 1)))
+  (is (thrown? \InvalidArgumentException (z/parse nil 1))))

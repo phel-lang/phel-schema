@@ -1,9 +1,12 @@
 (ns phel.schema.type.object
-  (:require phel.schema.interfaces :refer [schema]))
+  (:require phel.schema.interfaces :refer [schema schema?]))
 
 (defstruct rule-object [key test message])
 
 (defn object [& [children]]
+  (doseq [[k v] :pairs (or children {})]
+    (when-not (schema? v)
+      (throw (new \InvalidArgumentException (str "Child " k " of object is not a schema")))))
   (schema [(rule-object :required_error (fn [x] (not (nil? x))) "Required")
            (rule-object :invalid_type_error map? "Invalid type")]
           children))
