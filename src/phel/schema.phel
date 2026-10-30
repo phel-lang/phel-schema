@@ -44,13 +44,15 @@
 (defn- get-children-issues [schema paths target]
   (reduce concat [] (for [[k v] :pairs (schema :children)]
                       (if (schema? v)
-                        (get-issues v (conj paths k) (target k))
+                        (get-issues v (conj paths k) (get target k))
                         []))))
 
 (defn- get-issues [schema paths target]
   (concat
     (get-parent-issues schema paths target)
-    (get-children-issues schema paths target)))
+    (if (map? target)
+      (get-children-issues schema paths target)
+      [])))
 
 (defn safe-parse [schema target]
   (let [issues (get-issues schema [] target)]
