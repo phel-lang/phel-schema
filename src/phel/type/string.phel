@@ -4,7 +4,7 @@
 (defstruct rule-string [key test message])
 
 (defn string []
-  (schema [(rule-string :required_error (fn [x] (not (empty? x))) "Required")
+  (schema [(rule-string :required_error (fn [x] (not (nil? x))) "Required")
            (rule-string :invalid_type_error string? "Invalid type")]
           {}))
 

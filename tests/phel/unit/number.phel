@@ -14,3 +14,14 @@
     (is (= false (result :success)))
     (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
     (is (= "Invalid type" (get-in (result :issues) [0 :message])))))
+
+
+(deftest test-number-zero-is-present
+  (let [result (z/safe-parse (z/number) 0)]
+    (is (= true (result :success)))
+    (is (= 0 (result :data)))))
+
+(deftest test-number-boolean-is-invalid-type
+  (let [result (z/safe-parse (z/number) true)]
+    (is (= false (result :success)))
+    (is (= ["Invalid type"] (map #(get % :message) (result :issues))))))

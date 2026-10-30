@@ -23,3 +23,8 @@
     (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
     (is (= "Invalid type" (get-in (result :issues) [0 :message])))))
 
+
+(deftest test-object-empty-map-is-present
+  (let [result (z/safe-parse (z/object) {})]
+    (is (= true (result :success)))
+    (is (= {} (result :data)))))
