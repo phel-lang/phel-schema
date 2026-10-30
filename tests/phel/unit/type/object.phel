@@ -25,3 +25,24 @@
     (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
     (is (= "Invalid type" (get-in (result :issues) [0 :message])))
     (is (= [:user :username] (get-in (result :issues) [0 :paths])))))
+
+(deftest test-object-with-children-non-map-target-is-invalid-type
+  (let [my-schema (z/object {:a (z/string)})]
+    (doseq [target [12 "abc" [1 2] (php/array)]]
+      (let [result (z/safe-parse my-schema target)]
+        (is (= false (result :success)))
+        (is (= [{:message "Invalid type" :paths []}] (result :issues)))))))
+
+(deftest test-object-with-children-nil-target-is-required
+  (let [result (z/safe-parse (z/object {:a (z/string)}) nil)]
+    (is (= false (result :success)))
+    (is (= [{:message "Required" :paths []}] (result :issues)))))
+
+(deftest test-object-with-children-ok
+  (let [result (z/safe-parse (z/object {:a (z/string)}) {:a "x"})]
+    (is (= true (result :success)))))
+
+(deftest test-object-missing-child-is-required
+  (let [result (z/safe-parse (z/object {:a (z/string)}) {})]
+    (is (= false (result :success)))
+    (is (= [{:message "Required" :paths [:a]}] (result :issues)))))
