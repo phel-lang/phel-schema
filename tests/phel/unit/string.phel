@@ -23,3 +23,18 @@
     (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
     (is (= "Invalid type" (get-in (result :issues) [0 :message])))))
 
+
+(deftest test-string-empty-is-present
+  (let [result (z/safe-parse (z/string) "")]
+    (is (= true (result :success)))
+    (is (= "" (result :data)))))
+
+(deftest test-string-nil-is-required
+  (let [result (z/safe-parse (z/string) nil)]
+    (is (= false (result :success)))
+    (is (= "Required" (get-in (result :issues) [0 :message])))))
+
+(deftest test-string-boolean-is-invalid-type
+  (let [result (z/safe-parse (z/string) true)]
+    (is (= false (result :success)))
+    (is (= "Invalid type" (get-in (result :issues) [0 :message])))))

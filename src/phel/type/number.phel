@@ -4,7 +4,7 @@
 (defstruct rule-number [key test message])
 
 (defn number []
-  (schema [(rule-number :required_error (fn [x] (not (empty? x))) "Required")
+  (schema [(rule-number :required_error (fn [x] (not (nil? x))) "Required")
            (rule-number :invalid_type_error (fn [x] (or (number? x) (php/is_numeric x))) "Invalid type")]
           {}))
 
