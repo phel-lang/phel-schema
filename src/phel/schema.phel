@@ -26,13 +26,20 @@
 
 (declare get-issues)
 
+(defn- guard-rule? [rule]
+  (contains? #{:required_error :invalid_type_error} (rule :key)))
+
 (defn- get-parent-issues [schema paths target]
   (loop [rules (schema :rules)
          acc []]
     (if (empty? rules)
       acc
-      (let [rule (first rules)]
-        (recur (rest rules) (concat acc (validate rule paths target)))))))
+      (let [rule (first rules)
+            issues (validate rule paths target)
+            acc (concat acc issues)]
+        (if (and (guard-rule? rule) (not (empty? issues)))
+          acc
+          (recur (rest rules) acc))))))
 
 (defn- get-children-issues [schema paths target]
   (reduce concat [] (for [[k v] :pairs (schema :children)]
