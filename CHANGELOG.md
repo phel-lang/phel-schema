@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+ * `custom` takes an options map, `(z/custom s test {:message "..."})`, and defaults the message to "Invalid value". The bare string message still works and is deprecated.
+
 ## v0.1.0 (2026-10-04)
 
  * Require phel-lang ^0.54 and PHP 8.5
