@@ -92,3 +92,12 @@
   (let [result (z/safe-parse (as-> (z/string) s (z/min s 3)) 12)]
     (is (= false (result :success)))
     (is (= ["Invalid type"] (map #(get % :message) (result :issues))))))
+
+(deftest test-string-regex-invalid-pattern-throws-at-build-time
+  (is (thrown? \InvalidArgumentException (z/regex (z/string) "/(unclosed/"))))
+
+(deftest test-string-regex-bad-utf8-fails-the-rule
+  (let [my-schema (z/regex (z/string) "/^.*$/u")
+        result (z/safe-parse my-schema "\xff")]
+    (is (= false (result :success)))
+    (is (= "Not match" (get-in (result :issues) [0 :message])))))
