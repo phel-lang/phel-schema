@@ -26,10 +26,27 @@
       (s :rules)
       (rule-string :length (fn [x] (= (php/mb_strlen x) n)) (or message "Wrong length")))))
 
-(defn regex [s regexp & [{message :message}]]
+(defn- pcre-match [pattern subject]
+  (php/set_error_handler (fn [_ message] (throw (new \InvalidArgumentException message))))
+  (try
+    (php/preg_match pattern subject)
+    (finally (php/restore_error_handler))))
+
+(defn- regex-matches? [regexp x]
+  (let [result (pcre-match regexp x)]
+    (cond
+      (= result 1) true
+      (= result 0) false
+      (= (php/preg_last_error) php/PREG_BAD_UTF8_ERROR) false
+      :else (throw (new \RuntimeException (php/preg_last_error_msg))))))
+
+(defn regex
+  "Adds a PCRE rule. Throws `InvalidArgumentException` when `regexp` does not
+  compile. A subject that is not valid UTF-8 for a `/u` pattern fails the rule;
+  any other PCRE runtime error throws `RuntimeException`."
+  [s regexp & [{message :message}]]
+  (pcre-match regexp "")
   (assoc s :rules
     (conj
       (s :rules)
-      (rule-string :regex (fn [x] (= (php/preg_match regexp x) 1)) (or message "Not match")))))
-
-
+      (rule-string :regex (fn [x] (regex-matches? regexp x)) (or message "Not match")))))
