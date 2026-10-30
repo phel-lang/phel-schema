@@ -167,3 +167,14 @@
     (is (= false (result :success)))
     (is (= "Phel\PhelSchema\ZodError" (php/get_class (result :error))))
     (is (= "Not nonpositive" (get-in (result :issues) [0 :message])))))
+
+(deftest test-number-rule-keys
+  (is (= :gt (get-in (z/gt (z/number) 5) [:rules 2 :key])))
+  (is (= :gte (get-in (z/gte (z/number) 5) [:rules 2 :key])))
+  (is (= :lt (get-in (z/lt (z/number) 5) [:rules 2 :key])))
+  (is (= :lte (get-in (z/lte (z/number) 5) [:rules 2 :key])))
+  (is (= :int (get-in (z/int (z/number)) [:rules 2 :key])))
+  (is (= :positive (get-in (z/positive (z/number)) [:rules 2 :key])))
+  (is (= :nonnegative (get-in (z/nonnegative (z/number)) [:rules 2 :key])))
+  (is (= :negative (get-in (z/negative (z/number)) [:rules 2 :key])))
+  (is (= :nonpositive (get-in (z/nonpositive (z/number)) [:rules 2 :key]))))

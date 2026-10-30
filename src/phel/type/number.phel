@@ -30,7 +30,7 @@
   (assoc s :rules
     (conj
       (s :rules)
-      (rule-number :lt (fn [x] (<= x n)) (or message "Too large")))))
+      (rule-number :lte (fn [x] (<= x n)) (or message "Too large")))))
 
 (defn int [s & [{message :message}]]
   (assoc s :rules
