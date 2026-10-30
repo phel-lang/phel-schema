@@ -1,0 +1,15 @@
+(ns phel.schema.type.custom)
+
+(defstruct rule-custom [key test message])
+
+(defn custom
+  "Adds a rule that passes when `(test value)` is truthy. The options map takes
+  `:message`. A bare string is still accepted as the message but is deprecated."
+  [s test & [options]]
+  (let [message (if (string? options)
+                  options
+                  (or (get options :message) "Invalid value"))]
+    (assoc s :rules
+      (conj
+        (s :rules)
+        (rule-custom :custom test message)))))

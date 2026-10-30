@@ -3,7 +3,8 @@
   (:require phel.schema.interfaces :refer [schema schema? validate])
   (:require phel.schema.type.number :as n)
   (:require phel.schema.type.string :as s)
-  (:require phel.schema.type.object :as o))
+  (:require phel.schema.type.object :as o)
+  (:require phel.schema.type.custom :as c))
 
 (defn string [& args] (apply s/string args))
 (defn max [& args] (apply s/max args))
@@ -70,11 +71,4 @@
       (result :data)
       (throw (result :error)))))
 
-(defstruct rule-custom [key test message])
-
-(defn custom [s test message]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-custom :custom test message))))
-
+(defn custom [& args] (apply c/custom args))

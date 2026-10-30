@@ -32,3 +32,18 @@
   (is (thrown? \InvalidArgumentException (z/safe-parse nil 1)))
   (is (thrown? \InvalidArgumentException (z/safe-parse {:rules [] :children {}} 1)))
   (is (thrown? \InvalidArgumentException (z/parse nil 1))))
+
+(deftest test-custom-options-map-message
+  (let [my-schema (z/custom (z/string) #(= (php/mb_strlen %) 4) {:message "must be 4"})
+        result (z/safe-parse my-schema "12345")]
+    (is (= "must be 4" (get-in (result :issues) [0 :message])))))
+
+(deftest test-custom-default-message
+  (let [my-schema (z/custom (z/string) #(= (php/mb_strlen %) 4))
+        result (z/safe-parse my-schema "12345")]
+    (is (= "Invalid value" (get-in (result :issues) [0 :message])))))
+
+(deftest test-custom-bare-string-message-deprecated-form
+  (let [my-schema (z/custom (z/string) #(= (php/mb_strlen %) 4) "bare message")
+        result (z/safe-parse my-schema "12345")]
+    (is (= "bare message" (get-in (result :issues) [0 :message])))))
