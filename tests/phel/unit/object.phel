@@ -28,3 +28,7 @@
   (let [result (z/safe-parse (z/object) {})]
     (is (= true (result :success)))
     (is (= {} (result :data)))))
+
+(deftest test-object-non-schema-child-throws-naming-the-key
+  (is (thrown-with-msg? \InvalidArgumentException "Child :a of object is not a schema"
+                        (z/object {:a "not-a-schema"}))))

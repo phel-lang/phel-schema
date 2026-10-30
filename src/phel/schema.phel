@@ -43,9 +43,7 @@
 
 (defn- get-children-issues [schema paths target]
   (reduce concat [] (for [[k v] :pairs (schema :children)]
-                      (if (schema? v)
-                        (get-issues v (conj paths k) (get target k))
-                        []))))
+                      (get-issues v (conj paths k) (get target k)))))
 
 (defn- get-issues [schema paths target]
   (concat
@@ -55,6 +53,8 @@
       [])))
 
 (defn safe-parse [schema target]
+  (when-not (schema? schema)
+    (throw (new \InvalidArgumentException "The first argument must be a schema")))
   (let [issues (get-issues schema [] target)]
     (if (empty? issues)
       {:success true
