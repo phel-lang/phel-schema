@@ -1,115 +1,107 @@
 # phel-schema
 
+Schema validation for [Phel](https://phel-lang.org), inspired by [Zod](https://zod.dev).
+
 > [!WARNING]
-> ## This package is deprecated
+> **This package is abandoned. v0.2.0 is the last release.**
 >
-> This library uses the namespace `phel.schema`, the same name as the `phel.schema` namespace bundled with [phel-lang/phel-lang](https://github.com/phel-lang/phel-lang). When both are installed, this library hides the bundled one, so the core API is not available.
->
-> **Please remove `phel-lang/phel-schema` from your dependencies** and use the bundled [`phel.schema`](https://phel-lang.org/documentation/libraries/schema/). v0.2.0 is the last release. This repository will no longer receive updates.
->
-> The bundled API is not a drop-in replacement. It describes data with plain values such as `:int` or `[:map [:name :string]]` and offers `validate`, `explain`, `conform`, `coerce` and `generate`. It has no `string`, `number` or `object` builders, no `parse` or `safe-parse`, and no `ZodError`. These parts of this library have no named counterpart in core:
->
-> - `min`, `max`, `length`, `gt`, `gte`, `lt`, `lte`, `positive`, `nonnegative`, `negative`, `nonpositive`: write them as `[:and :int [:fn pos?]]` or `[:re "/^t/"]`
-> - `custom` with a message: `explain` reports errors by kind and path, with no custom message
-> - `parse` and `safe-parse`: call `validate` or `explain` and handle the result yourself
+> It uses the namespace `phel.schema`, the same as the schema library bundled with [phel-lang](https://github.com/phel-lang/phel-lang). When both are installed, this one hides the bundled one. Remove `phel-lang/phel-schema` from your dependencies and use the [bundled `phel.schema`](https://phel-lang.org/documentation/libraries/schema/).
 
----
+## Migrate to the bundled library
 
-Schema validation library in phel. The library inspired by zod
+The bundled library describes data with plain values such as `:int` and `[:map ...]`. It has no `string`, `number` or `object` builders, no `parse` or `safe-parse`, and no `ZodError`.
 
-## Basic Usage
+```clojure
+# phel-schema
+(def user (z/object {:name (-> (z/string) (z/min 3))
+                     :age  (-> (z/number) (z/int) (z/positive))}))
+(z/safe-parse user {:name "Lu" :age 0})
 
-Creating a simple string schema
+# bundled phel.schema
+(def user [:map [:name [:and :string [:fn #(>= (php/mb_strlen %) 3)]]]
+                [:age  [:and :int [:fn pos?]]]])
+(s/validate user {:name "Lu" :age 0})   # => false
+(s/explain user {:name "Lu" :age 0})    # => {:errors [{:in [:name] ...} {:in [:age] ...}] ...}
+```
+
+| phel-schema | Bundled `phel.schema` |
+|---|---|
+| `min`, `max`, `length` | `[:fn #(>= (php/mb_strlen %) 3)]` |
+| `gt`, `gte`, `lt`, `lte`, `positive`, `negative` | `[:fn pos?]`, `[:fn neg?]` or any predicate |
+| `regex` | `[:re "/^t/"]` |
+| `custom` with a message | `[:fn pred]`. `explain` reports the kind and path of an error, not a message. |
+| `parse`, `safe-parse` | `validate` or `explain`, then handle the result yourself |
+
+## Usage
 
 ```clojure
 (ns app
   (:require phel.schema :as z))
 
-# creating a schema for strings
-(def my-schema (z/string))
+(def username (-> (z/string) (z/min 3) (z/max 10) (z/regex "/^t/")))
 
-# parsing
-(z/parse my-schema "tuna") # => "tuna"
-(z/parse my-schema 12) # => throws ZodError
+(z/parse username "tuna")      # => "tuna"
+(z/parse username "a tuna")    # throws Phel\PhelSchema\ZodError
 
-# "safe" parsing (doesn't throw error if validation fails)
-(z/safe-parse my-schema "tuna") # => {:success true :data "tuna"}
-(z/safe-parse my-schema 12) # => {:success false :error ZodError :issues [...]}
+(z/safe-parse username "tuna")
+# => {:success true :data "tuna" :issues []}
+
+(z/safe-parse username 12)
+# => {:success false :error <ZodError> :issues ({:message "Invalid type" :paths []})}
 ```
+
+`parse` returns the value or throws. `safe-parse` never throws on bad input and returns a map instead.
+
+### Types
+
+| Builder | Accepts |
+|---|---|
+| `(z/string)` | PHP strings |
+| `(z/number)` | PHP ints and floats. `NAN`, `INF` and numeric strings such as `"5"` are rejected. |
+| `(z/object {...})` | Maps. Each child must be a schema. Keys that are not listed pass through unchecked. |
+
+`nil` fails every type with `Required`. A wrong type fails with `Invalid type`. Later rules only run after both checks pass, so you get one issue per bad value, not a pile of follow-up errors.
+
+### Rules
+
+Every rule takes the schema first and an optional `{:message "..."}` last.
+
+| Type | Rules (default message) |
+|---|---|
+| string | `min` (Too short), `max` (Too long), `length` (Wrong length), `regex` (Not match) |
+| number | `gt`, `gte` (Too small), `lt`, `lte` (Too large), `int` (Not integer), `positive` (Not positive), `nonnegative`, `negative`, `nonpositive` |
+| any | `custom` (Invalid value) |
 
 ```clojure
-(ns app
-  (:require phel.schema :as z))
+(z/min (z/string) 5 {:message "at least 5 characters"})
 
-# creating a schema for strings
-(def my-schema (as-> (z/string) s
-                     (z/min s 3)
-                     (z/max s 10)
-                     (z/regex s "/^t/")))
-
-# parsing
-(z/parse my-schema "tuna") # => "tuna"
-(z/parse my-schema "a tuna") # => throws ZodError
+(z/custom (z/string) #(= (php/mb_strlen %) 4) {:message "must be 4 characters"})
 ```
 
-Creating an object schema
+`regex` throws `InvalidArgumentException` when the pattern does not compile. It also throws `RuntimeException` on a PCRE runtime error such as a backtrack limit. A string that is not valid UTF-8 fails a `/u` pattern like any other mismatch.
 
+### Objects and errors
 
 ```clojure
-(ns app
-  (:require phel.schema :as z))
+(def signup (z/object {:user (z/object {:username (z/string)})}))
 
-(def user-schama (z/object {
-  :username (z/string)
-}))
-
-(z/parse user-schama {:username "Ludwig"})
+(z/safe-parse signup {:user {:username 123}})
+# :issues => ({:message "Invalid type" :paths [:user :username]})
 ```
 
-### Primitives
-
-```clojure
-(ns app
-  (:require phel.schema :as z))
-
-# primitive values
-(z/string)
-(z/number)
-(z/bigint) # z/bigint is not yet implemented.
-(z/infer user-schama) # z/infer is not yet implemented.
-(z/boolean) # z/boolean is not yet implemented.
-(z/date) # z/date is not yet implemented.
-(z/symbol) # z/symbol is not yet implemented.
-
-# empty types
-(z/undefined) # z/undefined is not yet implemented.
-(z/null) # z/null is not yet implemented.
-(z/void) # accepts undefined # z/void is not yet implemented.
-
-# catch-all types
-# allows any value
-(z/any) # z/any is not yet implemented.
-(z/unknown) # z/unknown is not yet implemented.
-
-# never type
-# allows no values
-(z/never) # z/never is not yet implemented.
-```
-
+The `ZodError` message lists the issues, for example `Zod Error: Invalid type at [:user :username]`. Call `getIssues` on it for the same data as a PHP array.
 
 ## Development
 
-### Open shell
+You need PHP 8.5 or later.
 
 ```bash
-docker compose build
-docker compose run --rm php_cli bash
+composer install
+composer test
 ```
 
-### Test
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the layout, the Docker setup and how to add a rule. Release notes are in [CHANGELOG.md](CHANGELOG.md).
 
-```bash
-# vendor/bin/phel test
-```
+## License
 
-
+[MIT](LICENSE)

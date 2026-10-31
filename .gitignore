@@ -1,6 +1,7 @@
 /vendor
 /composer.lock
 /data
+/.phel/
 
 # >>> agnostic-ai (managed) >>>
 # Generated paths. Edit specs, not this block. Run `agnostic-ai sync` to refresh.
