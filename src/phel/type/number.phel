@@ -5,7 +5,7 @@
 
 (defn number []
   (schema [(rule-number :required_error (fn [x] (not (nil? x))) "Required")
-           (rule-number :invalid_type_error (fn [x] (or (number? x) (php/is_numeric x))) "Invalid type")]
+           (rule-number :invalid_type_error (fn [x] (and (number? x) (not (php/is_nan x)) (not (php/is_infinite x)))) "Invalid type")]
           {}))
 
 (defn gt [s n & [{message :message}]]
@@ -36,7 +36,7 @@
   (assoc s :rules
     (conj
       (s :rules)
-      (rule-number :int (fn [x] (= (php/preg_match "/^[+-]?[0-9]+$/" (php/strval x)) 1)) (or message "Not integer")))))
+      (rule-number :int (fn [x] (or (int? x) (= x (php/floor x)))) (or message "Not integer")))))
 
 (defn positive [s & [{message :message}]]
   (assoc s :rules
