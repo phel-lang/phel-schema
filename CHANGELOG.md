@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+ * `ZodError` message lists the issues, for example `Zod Error: Invalid type at [:user :username]`, so the REPL shows what failed.
  * Breaking: `number` accepts only PHP ints and floats. Numeric strings such as `"5"` now fail with "Invalid type", and `NAN` and `INF` are rejected.
  * `int` checks the numeric value, so whole floats such as `1e20` pass and `100.5` fails.
  * `custom` takes an options map, `(z/custom s test {:message "..."})`, and defaults the message to "Invalid value". The bare string message still works and is deprecated.

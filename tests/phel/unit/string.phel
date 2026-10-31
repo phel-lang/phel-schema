@@ -38,3 +38,7 @@
   (let [result (z/safe-parse (z/string) true)]
     (is (= false (result :success)))
     (is (= "Invalid type" (get-in (result :issues) [0 :message])))))
+
+(deftest test-error-message-lists-root-issue
+  (let [result (z/safe-parse (z/string) 12)]
+    (is (= "Zod Error: Invalid type" (.getMessage (result :error))))))

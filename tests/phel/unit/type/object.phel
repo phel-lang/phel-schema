@@ -46,3 +46,9 @@
   (let [result (z/safe-parse (z/object {:a (z/string)}) {})]
     (is (= false (result :success)))
     (is (= [{:message "Required" :paths [:a]}] (result :issues)))))
+
+(deftest test-error-message-lists-issues-with-paths
+  (let [my-schema (z/object {:user (z/object {:username (z/string)})})
+        result (z/safe-parse my-schema {:user {:username 123}})]
+    (is (= "Zod Error: Invalid type at [:user :username]"
+           (.getMessage (result :error))))))
