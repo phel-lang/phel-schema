@@ -47,3 +47,7 @@
   (let [my-schema (z/custom (z/string) #(= (php/mb_strlen %) 4) "bare message")
         result (z/safe-parse my-schema "12345")]
     (is (= "bare message" (get-in (result :issues) [0 :message])))))
+
+(deftest test-custom-malformed-options-throw
+  (is (thrown? \InvalidArgumentException (z/custom (z/string) (fn [x] true) :oops)))
+  (is (thrown? \InvalidArgumentException (z/custom (z/string) (fn [x] true) [1 2]))))
