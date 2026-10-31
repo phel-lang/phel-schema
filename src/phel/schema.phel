@@ -53,6 +53,15 @@
       (get-children-issues schema paths target)
       [])))
 
+(defn- format-issue [issue]
+  (let [paths (issue :paths)]
+    (if (empty? paths)
+      (issue :message)
+      (str (issue :message) " at " paths))))
+
+(defn- error-message [issues]
+  (str "Zod Error: " (apply str (interpose "; " (map format-issue issues)))))
+
 (defn safe-parse [schema target]
   (when-not (schema? schema)
     (throw (new \InvalidArgumentException "The first argument must be a schema")))
@@ -62,7 +71,7 @@
        :data target
        :issues []}
       {:success false
-       :error (ZodError/create "Zod Error" (to-array issues))
+       :error (ZodError/create (error-message issues) (to-array issues))
        :issues issues})))
 
 (defn parse [schema target]
