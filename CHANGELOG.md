@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+ * Breaking: `number` accepts only PHP ints and floats. Numeric strings such as `"5"` now fail with "Invalid type", and `NAN` and `INF` are rejected.
+ * `int` checks the numeric value, so whole floats such as `1e20` pass and `100.5` fails.
  * `custom` takes an options map, `(z/custom s test {:message "..."})`, and defaults the message to "Invalid value". The bare string message still works and is deprecated.
 
 ## v0.1.0 (2026-10-04)
