@@ -1,6 +1,15 @@
 # CHANGELOG
 
-## Unreleased
+## v0.2.0 (2026-10-31)
+
+ * Last release. The package is abandoned in favour of the bundled `phel.schema` in phel-lang.
+ * Fix the required rule: `0`, `""` and `{}` are present values, and booleans no longer throw.
+ * Fix `safe-parse` throwing and emitting PHP notices: rules stop after a failed required or type check.
+ * Fix object schemas crashing on a non-map target.
+ * Fix `lte` registering its rule under `:lt`.
+ * `regex` throws on an invalid pattern when the schema is built, and on PCRE runtime errors. Bad UTF-8 against a `/u` pattern fails the rule.
+ * `object` and `custom` reject malformed arguments, and `safe-parse` and `parse` reject a first argument that is not a schema.
+ * Pin the CI actions to commit SHAs and add Dependabot.
 
  * `ZodError` message lists the issues, for example `Zod Error: Invalid type at [:user :username]`, so the REPL shows what failed.
  * Breaking: `number` accepts only PHP ints and floats. Numeric strings such as `"5"` now fail with "Invalid type", and `NAN` and `INF` are rejected.

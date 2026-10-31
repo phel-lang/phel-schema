@@ -2,6 +2,7 @@
     "name": "phel-lang/phel-schema",
     "description": "Schema validation library in phel. The library inspired by zod",
     "type": "library",
+    "abandoned": "phel-lang/phel-lang",
     "keywords": [
         "phel",
         "validation",

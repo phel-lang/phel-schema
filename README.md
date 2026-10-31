@@ -5,7 +5,7 @@
 >
 > This library uses the namespace `phel.schema`, the same name as the `phel.schema` namespace bundled with [phel-lang/phel-lang](https://github.com/phel-lang/phel-lang). When both are installed, this library hides the bundled one, so the core API is not available.
 >
-> **Please remove `phel-lang/phel-schema` from your dependencies** and use the bundled [`phel.schema`](https://phel-lang.org/documentation/libraries/schema/). This repository will no longer receive updates.
+> **Please remove `phel-lang/phel-schema` from your dependencies** and use the bundled [`phel.schema`](https://phel-lang.org/documentation/libraries/schema/). v0.2.0 is the last release. This repository will no longer receive updates.
 >
 > The bundled API is not a drop-in replacement. It describes data with plain values such as `:int` or `[:map [:name :string]]` and offers `validate`, `explain`, `conform`, `coerce` and `generate`. It has no `string`, `number` or `object` builders, no `parse` or `safe-parse`, and no `ZodError`. These parts of this library have no named counterpart in core:
 >
