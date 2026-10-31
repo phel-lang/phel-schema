@@ -32,3 +32,6 @@
 (deftest test-object-non-schema-child-throws-naming-the-key
   (is (thrown-with-msg? \InvalidArgumentException "Child :a of object is not a schema"
                         (z/object {:a "not-a-schema"}))))
+
+(deftest test-object-non-map-children-throws
+  (is (thrown? \InvalidArgumentException (z/object [(z/string)]))))

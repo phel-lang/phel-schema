@@ -6,6 +6,8 @@
   "Adds a rule that passes when `(test value)` is truthy. The options map takes
   `:message`. A bare string is still accepted as the message but is deprecated."
   [s test & [options]]
+  (when-not (or (nil? options) (string? options) (map? options))
+    (throw (new \InvalidArgumentException "The options of custom must be a map")))
   (let [message (if (string? options)
                   options
                   (or (get options :message) "Invalid value"))]

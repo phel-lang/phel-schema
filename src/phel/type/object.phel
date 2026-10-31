@@ -4,6 +4,8 @@
 (defstruct rule-object [key test message])
 
 (defn object [& [children]]
+  (when-not (or (nil? children) (map? children))
+    (throw (new \InvalidArgumentException "The children of object must be a map")))
   (doseq [[k v] :pairs (or children {})]
     (when-not (schema? v)
       (throw (new \InvalidArgumentException (str "Child " k " of object is not a schema")))))
