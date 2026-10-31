@@ -2,6 +2,21 @@
 
 (defstruct schema [rules children])
 
+(defstruct rule [key test message])
+
+(defn typed-schema
+  "Builds a schema whose first two rules check that a value is present and that
+  `type-test` accepts it. Later rules only run once both pass."
+  [type-test children]
+  (schema [(rule :required_error (fn [x] (not (nil? x))) "Required")
+           (rule :invalid_type_error type-test "Invalid type")]
+          children))
+
+(defn add-rule
+  "Returns `s` with a rule appended."
+  [s key test message]
+  (assoc s :rules (conj (s :rules) (rule key test message))))
+
 (defn validate
   "Validates `target` against `rule`, returning a vector of issues."
   [rule paths target]

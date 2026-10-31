@@ -1,63 +1,35 @@
 (ns phel.schema.type.number
-  (:require phel.schema.interfaces :refer [schema]))
+  (:require phel.schema.interfaces :refer [typed-schema add-rule]))
 
-(defstruct rule-number [key test message])
+(defn- finite-number? [x]
+  (and (number? x) (not (php/is_nan x)) (not (php/is_infinite x))))
 
 (defn number []
-  (schema [(rule-number :required_error (fn [x] (not (nil? x))) "Required")
-           (rule-number :invalid_type_error (fn [x] (and (number? x) (not (php/is_nan x)) (not (php/is_infinite x)))) "Invalid type")]
-          {}))
+  (typed-schema finite-number? {}))
 
 (defn gt [s n & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :gt (fn [x] (> x n)) (or message "Too small")))))
+  (add-rule s :gt #(> % n) (or message "Too small")))
 
 (defn gte [s n & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :gte (fn [x] (>= x n)) (or message "Too small")))))
+  (add-rule s :gte #(>= % n) (or message "Too small")))
 
 (defn lt [s n & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :lt (fn [x] (< x n)) (or message "Too large")))))
+  (add-rule s :lt #(< % n) (or message "Too large")))
 
 (defn lte [s n & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :lte (fn [x] (<= x n)) (or message "Too large")))))
+  (add-rule s :lte #(<= % n) (or message "Too large")))
 
 (defn int [s & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :int (fn [x] (or (int? x) (= x (php/floor x)))) (or message "Not integer")))))
+  (add-rule s :int #(or (int? %) (= % (php/floor %))) (or message "Not integer")))
 
 (defn positive [s & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :positive (fn [x] (> x 0)) (or message "Not positive")))))
+  (add-rule s :positive #(> % 0) (or message "Not positive")))
 
 (defn nonnegative [s & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :nonnegative (fn [x] (>= x 0)) (or message "Not nonnegative")))))
+  (add-rule s :nonnegative #(>= % 0) (or message "Not nonnegative")))
 
 (defn negative [s & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :negative (fn [x] (< x 0)) (or message "Not negative")))))
+  (add-rule s :negative #(< % 0) (or message "Not negative")))
 
 (defn nonpositive [s & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-number :nonpositive (fn [x] (<= x 0)) (or message "Not nonpositive")))))
+  (add-rule s :nonpositive #(<= % 0) (or message "Not nonpositive")))
