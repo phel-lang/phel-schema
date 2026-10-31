@@ -1,30 +1,17 @@
 (ns phel.schema.type.string
-  (:require phel.schema.interfaces :refer [schema]))
-
-(defstruct rule-string [key test message])
+  (:require phel.schema.interfaces :refer [typed-schema add-rule]))
 
 (defn string []
-  (schema [(rule-string :required_error (fn [x] (not (nil? x))) "Required")
-           (rule-string :invalid_type_error string? "Invalid type")]
-          {}))
+  (typed-schema string? {}))
 
 (defn max [s n & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-string :max (fn [x] (<= (php/mb_strlen x) n)) (or message "Too long")))))
+  (add-rule s :max #(<= (php/mb_strlen %) n) (or message "Too long")))
 
 (defn min [s n & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-string :min (fn [x] (>= (php/mb_strlen x) n)) (or message "Too short")))))
+  (add-rule s :min #(>= (php/mb_strlen %) n) (or message "Too short")))
 
 (defn length [s n & [{message :message}]]
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-string :length (fn [x] (= (php/mb_strlen x) n)) (or message "Wrong length")))))
+  (add-rule s :length #(= (php/mb_strlen %) n) (or message "Wrong length")))
 
 (defn- pcre-match [pattern subject]
   (php/set_error_handler (fn [_ message] (throw (new \InvalidArgumentException message))))
@@ -46,7 +33,4 @@
   any other PCRE runtime error throws `RuntimeException`."
   [s regexp & [{message :message}]]
   (pcre-match regexp "")
-  (assoc s :rules
-    (conj
-      (s :rules)
-      (rule-string :regex (fn [x] (regex-matches? regexp x)) (or message "Not match")))))
+  (add-rule s :regex #(regex-matches? regexp %) (or message "Not match")))

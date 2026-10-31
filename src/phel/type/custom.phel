@@ -1,6 +1,5 @@
-(ns phel.schema.type.custom)
-
-(defstruct rule-custom [key test message])
+(ns phel.schema.type.custom
+  (:require phel.schema.interfaces :refer [add-rule]))
 
 (defn custom
   "Adds a rule that passes when `(test value)` is truthy. The options map takes
@@ -11,7 +10,4 @@
   (let [message (if (string? options)
                   options
                   (or (get options :message) "Invalid value"))]
-    (assoc s :rules
-      (conj
-        (s :rules)
-        (rule-custom :custom test message)))))
+    (add-rule s :custom test message)))
